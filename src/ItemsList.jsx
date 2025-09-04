@@ -1,28 +1,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "./supabaseClient";
 
-function ItemsList() {
-  const [items, setItems] = useState([]);
-
-  useEffect(() => {
-    fetchItems();
-  }, []);
-
-  async function fetchItems() {
-    const { data, error } = await supabase
-      .from("items")
-      .select("*")
-      .order("created_at", { ascending: false }); // newest first
-
-    if (error) {
-      console.error("Error fetching items:", error);
-    } else {
-      setItems(data);
-    }
-  }
-
+function ItemsList({ items }) {
   return (
-    <div className="p-6">
+    <div className="p-6 gap-4">
       <h2 className="text-2xl font-bold mb-4">Lost & Found Items</h2>
       <div className="">
         {items.map((item) => (

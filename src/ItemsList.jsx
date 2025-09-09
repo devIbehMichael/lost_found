@@ -28,6 +28,8 @@ function ItemsList({ items }) {
             >
               {item.status.toUpperCase()}
             </p>
+            <p>{item.phone_number}</p>
+            <p>{item.image_url}</p>
           </div>
         ))}
       </div>

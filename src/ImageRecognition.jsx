@@ -1,19 +1,17 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import * as tf from "@tensorflow/tfjs";
 import * as mobilenet from "@tensorflow-models/mobilenet";
 import { supabase } from "./supabaseClient";
-
+import { Link } from "react-router-dom";
 
 export default function ImageRecognition() {
   const [result, setResult] = useState("");
-  const [match, setMatch] = useState(null); // 👈 store matched item
+  const [match, setMatch] = useState(null);
   const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
 
   async function getEmbedding(model, imgEl) {
-    const activation = model.infer(imgEl, true); 
-    const embedding = activation.flatten(); 
+    const activation = model.infer(imgEl, true);
+    const embedding = activation.flatten();
     return embedding;
   }
 
@@ -75,10 +73,9 @@ export default function ImageRecognition() {
 
     if (bestMatch && bestScore > 0.7) {
       setResult(`Best match: ${bestMatch.title} (score: ${bestScore.toFixed(2)})`);
-      setMatch(bestMatch); // 👈 save best match
+      setMatch(bestMatch);
     } else {
-      setResult("No close match found.");
-      navigate("/items"); // 👈 redirect if no match
+      setResult("No match found."); // ✅ consistent string
     }
 
     setLoading(false);
@@ -90,22 +87,40 @@ export default function ImageRecognition() {
       <input type="file" accept="image/*" onChange={handleImageUpload} />
       {loading ? <p>Processing...</p> : <p>{result}</p>}
 
-      {match && (
-        <div className="mt-4 border p-4 rounded shadow">
-          <img
-            src={match.image_url}
-            alt={match.title}
-            className="w-40 h-40 object-cover mb-2 rounded"
-          />
-          <h3 className="text-lg font-semibold">{match.title}</h3>
-          <p>{match.description}</p>
-          <p className="text-sm text-gray-600">📍 {match.location}</p>
-          <p className="text-sm">📞 {match.phone_number}</p>
-          <p className="font-bold">
-            Match score: {match.score.toFixed(2)}
-          </p>
-        </div>
+      {/* show link if no match */}
+      {!loading && result === "No match found." && (
+        <p className="mt-2 text-red-500">
+          No match found.{" "}
+          <Link to="/items" className="text-blue-600 underline">
+            Please check the list
+          </Link>
+        </p>
       )}
+
+     {match && (
+  <div className="mt-4 border p-4 rounded shadow">
+    <img
+      src={match.image_url}
+      alt={match.title}
+      className="w-40 h-40 object-cover mb-2 rounded"
+    />
+    <h3 className="text-lg font-semibold">{match.title}</h3>
+    <p>{match.description}</p>
+
+    {/* ✅ Styled status just like in ItemsList */}
+    <p
+      className={`mt-2 font-bold ${
+        match.status === "lost" ? "text-red-500" : "text-green-500"
+      }`}
+    >
+      {match.status?.toUpperCase()}
+    </p>
+
+    <p className="text-sm text-gray-600">📍 {match.location}</p>
+    <p className="text-sm">📞 {match.phone_number}</p>
+    <p className="font-bold">Match score: {match.score.toFixed(2)}</p>
+  </div>
+)}
     </div>
   );
 }

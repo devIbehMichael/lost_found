@@ -53,8 +53,6 @@ function App() {
               Sign out
             </button>
           </div>
-
-          <AddItem fetchItems={fetchItems} />
           <hr className="my-6" />
           
         <ImageRecognition />

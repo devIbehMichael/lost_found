@@ -1,7 +1,20 @@
 import { useEffect, useState } from "react";
 import { supabase } from "./supabaseClient";
 
-function ItemsList({ items }) {
+function ItemsList() {
+   const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    async function fetchItems() {
+      const { data, error } = await supabase
+        .from("items")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) console.error(error);
+      else setItems(data);
+    }
+    fetchItems();
+  }, []);
   return (
     <div className="p-6 gap-4">
       <h2 className="text-2xl font-bold mb-4">Lost & Found Items</h2>
@@ -12,11 +25,11 @@ function ItemsList({ items }) {
             className="border p-4 rounded-lg shadow hover:shadow-lg transition flex flex-row"
           >
             {item.image_url && (
-              <img
-                src={item.image_url}
-                alt={item.title}
-                className="w-full h-40 object-cover rounded mb-3"
-              />
+            <img
+  src={item.image_url}
+  alt={item.title}
+  className="w-32 h-32 object-cover rounded-lg mr-4 border-2 border-gray-300"
+/>
             )}
             <h3 className="text-xl font-semibold">{item.title}</h3>
             <p className="text-gray-600">{item.description}</p>
@@ -29,7 +42,7 @@ function ItemsList({ items }) {
               {item.status.toUpperCase()}
             </p>
             <p>{item.phone_number}</p>
-            <p>{item.image_url}</p>
+         
           </div>
         ))}
       </div>

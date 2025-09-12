@@ -3,6 +3,7 @@ import { supabase } from "./supabaseClient";
 import Auth from "./Auth";
 import AddItem from "./AddItem";
 import ItemsList from "./ItemsList";
+import ImageRecognition from "./ImageRecognition";
 
 function App() {
   const [session, setSession] = useState(null);
@@ -55,7 +56,8 @@ function App() {
 
           <AddItem fetchItems={fetchItems} />
           <hr className="my-6" />
-          <ItemsList items={items} />
+          
+        <ImageRecognition />
         </>
       )}
     </div>

@@ -4,6 +4,8 @@ import Auth from "./Auth";
 import AddItem from "./AddItem";
 import ItemsList from "./ItemsList";
 import ImageRecognition from "./ImageRecognition";
+import { Link } from "react-router-dom";
+
 
 function App() {
   const [session, setSession] = useState(null);
@@ -52,6 +54,7 @@ function App() {
             >
               Sign out
             </button>
+            <Link to="/profile" className="text-blue-600 underline">My Profile</Link>
           </div>
           <hr className="my-6" />
           

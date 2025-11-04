@@ -62,7 +62,7 @@ export default function ProfilePage() {
   if (!user) return <p className="p-4 text-red-500">Please log in to view your profile.</p>;
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="m-6 max-w-4xl mx-auto ">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">My Profile</h2>
         <button

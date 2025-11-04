@@ -3,6 +3,7 @@ import * as tf from "@tensorflow/tfjs";
 import * as mobilenet from "@tensorflow-models/mobilenet";
 import { supabase } from "./supabaseClient";
 import { Link } from "react-router-dom";
+import DragAndDropUpload from "./draganddrop.jsx"
 
 export default function ImageRecognition() {
   const [result, setResult] = useState("");
@@ -23,8 +24,7 @@ export default function ImageRecognition() {
     return sim.array();
   }
 
-  async function handleImageUpload(e) {
-    const file = e.target.files[0];
+  async function handleImageUpload(file) {
     if (!file) return;
 
     setLoading(true);
@@ -75,17 +75,24 @@ export default function ImageRecognition() {
       setResult(`Best match: ${bestMatch.title} (score: ${bestScore.toFixed(2)})`);
       setMatch(bestMatch);
     } else {
-      setResult("No match found."); // ✅ consistent string
+      setResult("No match found.");
     }
 
     setLoading(false);
   }
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-2">Image Recognition</h2>
-      <input type="file" accept="image/*" onChange={handleImageUpload} />
-      {loading ? <p>Processing...</p> : <p>{result}</p>}
+    <div className="p-4 flex flex-col items-center">
+      <h2 className="text-3xl font-bold mb-4">Search for Lost Items</h2>
+      
+      {/* ✅ Use Drag & Drop upload */}
+      <DragAndDropUpload onFileSelect={handleImageUpload} />
+
+      {loading ? (
+        <p className="mt-4 text-gray-600">Processing...</p>
+      ) : (
+        <p className="mt-4 text-gray-700">{result}</p>
+      )}
 
       {/* show link if no match */}
       {!loading && result === "No match found." && (
@@ -97,30 +104,30 @@ export default function ImageRecognition() {
         </p>
       )}
 
-     {match && (
-  <div className="mt-4 border p-4 rounded shadow">
-    <img
-      src={match.image_url}
-      alt={match.title}
-      className="w-40 h-40 object-cover mb-2 rounded"
-    />
-    <h3 className="text-lg font-semibold">{match.title}</h3>
-    <p>{match.description}</p>
+      {/* ✅ If match found, show details */}
+      {match && (
+        <div className="mt-6 border p-4 rounded shadow-lg w-full max-w-sm text-center">
+          <img
+            src={match.image_url}
+            alt={match.title}
+            className="w-40 h-40 object-cover mx-auto mb-3 rounded"
+          />
+          <h3 className="text-lg font-semibold">{match.title}</h3>
+          <p className="text-gray-600 mb-1">{match.description}</p>
 
-    {/* ✅ Styled status just like in ItemsList */}
-    <p
-      className={`mt-2 font-bold ${
-        match.status === "lost" ? "text-red-500" : "text-green-500"
-      }`}
-    >
-      {match.status?.toUpperCase()}
-    </p>
+          <p
+            className={`mt-2 font-bold ${
+              match.status === "lost" ? "text-red-500" : "text-green-500"
+            }`}
+          >
+            {match.status?.toUpperCase()}
+          </p>
 
-    <p className="text-sm text-gray-600">📍 {match.location}</p>
-    <p className="text-sm">📞 {match.phone_number}</p>
-    <p className="font-bold">Match score: {match.score.toFixed(2)}</p>
-  </div>
-)}
+          <p className="text-sm text-gray-600 mt-1">📍 {match.location}</p>
+          <p className="text-sm text-gray-600">📞 {match.phone_number}</p>
+          <p className="font-bold mt-2">Match score: {match.score.toFixed(2)}</p>
+        </div>
+      )}
     </div>
   );
 }

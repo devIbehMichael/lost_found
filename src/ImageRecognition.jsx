@@ -25,27 +25,33 @@ export default function ImageRecognition() {
   }
 
   async function handleImageUpload(file) {
-    if (!file) return;
+  if (!file || !(file instanceof File)) {
+    console.error("Invalid file input:", file);
+    setResult("Invalid file selected.");
+    return;
+  }
 
+  try {
     setLoading(true);
     setResult("Analyzing image...");
     setMatch(null);
 
     const model = await mobilenet.load();
 
+    // ✅ Make sure file is a valid Blob before creating URL
+    const objectUrl = URL.createObjectURL(file);
+
     const img = document.createElement("img");
-    img.src = URL.createObjectURL(file);
-    await new Promise((resolve) => (img.onload = resolve));
+    img.src = objectUrl;
+    await new Promise((resolve, reject) => {
+      img.onload = resolve;
+      img.onerror = reject;
+    });
 
     const uploadedEmbedding = await getEmbedding(model, img);
 
     const { data: items, error } = await supabase.from("items").select("*");
-    if (error) {
-      console.error(error);
-      setResult("Error fetching items");
-      setLoading(false);
-      return;
-    }
+    if (error) throw error;
 
     let bestMatch = null;
     let bestScore = -1;
@@ -53,10 +59,18 @@ export default function ImageRecognition() {
     for (const item of items) {
       if (!item.image_url) continue;
 
-      const dbImg = document.createElement("img");
-      dbImg.crossOrigin = "anonymous";
-      dbImg.src = item.image_url;
-      await new Promise((resolve) => (dbImg.onload = resolve));
+   const dbImg = document.createElement("img");
+dbImg.crossOrigin = "anonymous";
+dbImg.src = item.image_url;
+
+await new Promise((resolve, reject) => {
+  dbImg.onload = resolve;
+  dbImg.onerror = reject;  // 👈 prevent infinite hang
+}).catch(() => {
+  console.warn("Skipping broken image:", item.image_url);
+  return; // skip this image
+});
+
 
       const dbEmbedding = await getEmbedding(model, dbImg);
       const score = await cosineSimilarity(uploadedEmbedding, dbEmbedding);
@@ -70,16 +84,22 @@ export default function ImageRecognition() {
     }
 
     uploadedEmbedding.dispose();
+    URL.revokeObjectURL(objectUrl); // ✅ free memory
 
-    if (bestMatch && bestScore > 0.7) {
+    if (bestMatch && bestScore > 0.6) {
       setResult(`Best match: ${bestMatch.title} (score: ${bestScore.toFixed(2)})`);
       setMatch(bestMatch);
     } else {
       setResult("No match found.");
     }
-
+  } catch (err) {
+    console.error("Error processing image:", err);
+    setResult("Error processing image.");
+  } finally {
     setLoading(false);
   }
+}
+
 
   return (
     <div className="p-4 flex flex-col items-center">

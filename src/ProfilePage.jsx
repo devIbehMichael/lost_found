@@ -67,7 +67,7 @@ export default function ProfilePage() {
         <h2 className="text-2xl font-bold">My Profile</h2>
         <button
           onClick={handleLogout}
-          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
+          className="bg-blue-300 hover:bg-blue-400 text-white px-4 py-2 rounded-lg"
         >
           Logout
         </button>
@@ -87,7 +87,7 @@ export default function ProfilePage() {
           {items.map((item) => (
             <div
               key={item.id}
-              className="border rounded-lg p-4 shadow hover:shadow-lg transition"
+              className="border border-gray-100 rounded-2xl p-4 shadow hover:shadow-lg transition"
             >
               <img
                 src={item.image_url}
@@ -112,7 +112,7 @@ export default function ProfilePage() {
 
               <button
                 onClick={() => handleDelete(item.id)}
-                className="mt-3 w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition"
+                className="mt-3 w-full bg-blue-400 text-white py-2 rounded hover:bg-blue-600 transition"
               >
                 Delete
               </button>

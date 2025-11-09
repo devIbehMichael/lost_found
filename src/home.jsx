@@ -33,7 +33,7 @@ function HomePage() {
       {session && (
         <>
           <div className="flex flex-row justify-between items-center border-b border-gray-200 p-2">
-            <div><img src={img1} alt="" srcset="" /></div>
+            <div><img src={img1} alt="" srcSet="" /></div>
             <div className="flex flex-row items-center gap-4">
            <a href="/profile"> <p className="text-xs text-gray-600">
               Signed in as{" "}

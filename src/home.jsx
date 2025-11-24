@@ -33,9 +33,9 @@ function HomePage() {
       {session && (
         <>
           <div className="flex flex-row justify-between items-center border-b border-gray-200 p-2">
-            <div><img src={img1} alt="" srcSet="" /></div>
+            <div className="w-xs"><img src={img1} alt="" srcSet="" /></div>
             <div className="flex flex-row items-center gap-4">
-           <a href="/profile"> <p className="text-xs text-gray-600">
+           <a href="/profile"> <p className="text-[8px] text-gray-600 sm:text-xs">
               Signed in as{" "}
               <span className="font-semibold">{session.user.email}</span>
             </p></a>

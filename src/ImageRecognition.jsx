@@ -109,24 +109,35 @@ await new Promise((resolve, reject) => {
       <DragAndDropUpload onFileSelect={handleImageUpload} />
 
       {loading ? (
-        <p className="mt-4 text-gray-600">Processing...</p>
+        <div className="mt-4 flex items-center gap-2 justify-center">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+          <p className=" text-gray-600">Processing...</p></div>
+        
       ) : (
         <p className="mt-4 text-gray-700">{result}</p>
       )}
 
       {/* show link if no match */}
-      {!loading && result === "No match found." && (
-        <p className="mt-2 text-red-500">
-          No match found.{" "}
-          <Link to="/items" className="text-blue-600 underline">
-            Please check the list
+         {/* ✅ Show items page link for all error and no-match scenarios */}
+      {/* {!loading && (result === "No match found." || 
+                   result === "Error processing image." ||
+                   result.includes("No valid images") || 
+                   result.includes("No items in database") ||
+                   result === "Invalid file selected.") && (
+        <div className="mt-4 text-center">
+        
+          <Link to="/items" className="text-blue-600 underline hover:text-blue-800 font-medium">
+            Browse all items instead →
           </Link>
-        </p>
-      )}
+        </div>
+      )} */}
 
       {/* ✅ If match found, show details */}
+         <Link to="/items" className="text-blue-600 underline hover:text-blue-800 font-medium">
+            Browse all items instead →
+          </Link>
       {match && (
-        <div className="mt-6 border p-4 rounded shadow-lg w-full max-w-sm text-center">
+        <div className="mt-6 border border-gray-300 p-4 rounded-2xl shadow-lg w-full max-w-sm text-center">
           <img
             src={match.image_url}
             alt={match.title}
